@@ -14,40 +14,71 @@
   let lastMouseY = 0;
 
   function initApp() {
-    const canvas = document.getElementById("gl-canvas");
-    if (!Renderer.init(canvas)) return;
+    const loadingScreen = document.getElementById("loading-screen");
+    const loadingBar = document.getElementById("loading-bar-fill");
+    const loadingStatus = document.getElementById("loading-status");
+    const startStamp = performance.now();
 
-    UI.init();
-    bindCanvasInteractions(canvas);
+    if (loadingBar) loadingBar.style.width = "32%";
 
-    let lastTime = performance.now();
-    let fpsAccum = 0;
-    let fpsFrames = 0;
+    // Allow browser to paint the animated Loading Screen before heavy WebGL2 & texture build
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        const canvas = document.getElementById("gl-canvas");
+        if (!Renderer.init(canvas)) {
+          if (loadingScreen) loadingScreen.classList.add("hidden");
+          return;
+        }
 
-    function frame(now) {
-      const rawDt = Math.min(0.05, (now - lastTime) / 1000);
-      lastTime = now;
+        if (loadingBar) loadingBar.style.width = "82%";
+        if (loadingStatus) loadingStatus.textContent = "Menyiapkan Antarmuka & Lab Komputer Grafis...";
 
-      fpsAccum += rawDt;
-      fpsFrames++;
-      if (fpsAccum >= 0.35) {
-        State.stats.fps = fpsFrames / fpsAccum;
-        State.stats.frameMs = (fpsAccum / fpsFrames) * 1000;
-        fpsAccum = 0;
-        fpsFrames = 0;
-        UI.updateLiveInspector();
-      }
+        UI.init();
+        bindCanvasInteractions(canvas);
 
-      const dtSim = rawDt * State.timeSpeed;
-      State.simTime += dtSim;
-      if (State.cg.animateOrbit) State.orbitTime += dtSim;
-      if (State.cg.animateSpin) State.spinTime += dtSim;
-      Renderer.render(rawDt, keys);
+        let lastTime = performance.now();
+        let fpsAccum = 0;
+        let fpsFrames = 0;
 
-      requestAnimationFrame(frame);
-    }
+        function frame(now) {
+          const rawDt = Math.min(0.05, (now - lastTime) / 1000);
+          lastTime = now;
 
-    requestAnimationFrame(frame);
+          fpsAccum += rawDt;
+          fpsFrames++;
+          if (fpsAccum >= 0.35) {
+            State.stats.fps = fpsFrames / fpsAccum;
+            State.stats.frameMs = (fpsAccum / fpsFrames) * 1000;
+            fpsAccum = 0;
+            fpsFrames = 0;
+            UI.updateLiveInspector();
+          }
+
+          const dtSim = rawDt * State.timeSpeed;
+          State.simTime += dtSim;
+          if (State.cg.animateOrbit) State.orbitTime += dtSim;
+          if (State.cg.animateSpin) State.spinTime += dtSim;
+          Renderer.render(rawDt, keys);
+
+          requestAnimationFrame(frame);
+        }
+
+        requestAnimationFrame(frame);
+
+        if (loadingBar) loadingBar.style.width = "100%";
+        if (loadingStatus) loadingStatus.textContent = "Siap Menjelajahi Tata Surya!";
+
+        // Ensure splash screen stays visible smoothly for at least 950ms before fading out
+        const elapsed = performance.now() - startStamp;
+        const holdMs = Math.max(280, 950 - elapsed);
+        setTimeout(() => {
+          if (loadingScreen) {
+            loadingScreen.classList.add("fade-out");
+            setTimeout(() => loadingScreen.classList.add("hidden"), 480);
+          }
+        }, holdMs);
+      }, 45);
+    });
   }
 
   function bindCanvasInteractions(canvas) {

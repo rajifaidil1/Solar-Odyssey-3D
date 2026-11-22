@@ -4,9 +4,26 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SOLAR ODYSSEY — Simulasi Tata Surya & Lab Komputer Grafis</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
+  <!-- Splash Loading Screen -->
+  <div id="loading-screen" class="loading-screen">
+    <div class="loading-content">
+      <div class="loading-logo-wrap">
+        <div class="loading-orbit-ring"></div>
+        <img src="assets/logo.svg" alt="Logo Solar Odyssey" class="loading-logo-img" />
+      </div>
+      <div class="loading-title">SOLAR <span>ODYSSEY</span></div>
+      <div class="loading-subtitle">Explore · Learn · Discover the Universe</div>
+      <div class="loading-bar-track">
+        <div id="loading-bar-fill" class="loading-bar-fill"></div>
+      </div>
+      <div id="loading-status" class="loading-status">Menginisialisasi Pipeline WebGL2 &amp; Tekstur Planet...</div>
+    </div>
+  </div>
+
   <canvas id="gl-canvas"></canvas>
 
   <!-- Hover Tooltip -->
@@ -19,11 +36,18 @@
   <!-- Title / Splash Overlay -->
   <div id="title-overlay" class="title-overlay">
     <div class="title-card">
-      <div class="badge-row">
-        <span class="badge">WEBGL2 · GLSL ES 3.00</span>
-        <span class="badge badge-accent">100% OFFLINE STANDALONE</span>
+      <div class="title-brand-header">
+        <div class="title-logo-ring">
+          <img src="assets/logo.svg" alt="Logo Solar Odyssey" class="title-logo-img" />
+        </div>
+        <div>
+          <div class="badge-row">
+            <span class="badge">WEBGL2 · GLSL ES 3.00</span>
+            <span class="badge badge-accent">100% OFFLINE STANDALONE</span>
+          </div>
+          <h1 class="game-title">SOLAR <span>ODYSSEY</span></h1>
+        </div>
       </div>
-      <h1 class="game-title">SOLAR <span>ODYSSEY</span></h1>
       <p class="game-subtitle">
         Simulasi Eksplorasi Tata Surya Interaktif &amp; Laboratorium Pipeline Komputer Grafis
       </p>
@@ -55,7 +79,9 @@
   <header id="top-hud" class="top-hud hidden">
     <div class="hud-left">
       <div class="brand-mini">
-        <span class="brand-orb"></span>
+        <span class="brand-logo-wrap">
+          <img src="assets/logo.svg" alt="Logo Solar Odyssey" class="brand-logo-img" />
+        </span>
         <div>
           <div class="brand-title">SOLAR ODYSSEY</div>
           <div class="brand-sub" id="hud-mode-label">Mode Kamera Orbit · Tata Surya</div>

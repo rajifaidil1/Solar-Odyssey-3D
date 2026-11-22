@@ -53,6 +53,172 @@ html, body {
   display: none !important;
 }
 
+/* ==========================================================================
+   Splash Loading Screen & Solar Odyssey Logo Branding
+   ========================================================================== */
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(56, 189, 248, 0.16), transparent 52%),
+    radial-gradient(circle at 22% 72%, rgba(139, 92, 246, 0.2), transparent 48%),
+    radial-gradient(circle at 80% 25%, rgba(245, 158, 11, 0.12), transparent 45%),
+    #040714;
+  transition: opacity 0.45s ease, visibility 0.45s ease;
+}
+
+.loading-screen.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 24px;
+  max-width: 440px;
+  width: 90vw;
+}
+
+.loading-logo-wrap {
+  position: relative;
+  width: 128px;
+  height: 128px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 20px;
+}
+
+.loading-orbit-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid rgba(79, 209, 245, 0.22);
+  border-top-color: #4fd1f5;
+  border-right-color: #f6b93b;
+  animation: spinOrbit 2.4s linear infinite;
+  box-shadow: 0 0 28px rgba(79, 209, 245, 0.25);
+}
+
+.loading-logo-img {
+  width: 112px;
+  height: 112px;
+  display: block;
+  filter: drop-shadow(0 0 22px rgba(245, 158, 11, 0.42));
+  animation: floatLogo 3.2s ease-in-out infinite;
+}
+
+.loading-title {
+  font-size: clamp(2rem, 4.5vw, 2.75rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #f2f5ff;
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+
+.loading-title span {
+  color: #f6b93b;
+  text-shadow: 0 0 24px rgba(246, 185, 59, 0.35);
+}
+
+.loading-subtitle {
+  font-size: 0.9rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #4fd1f5;
+  margin-bottom: 26px;
+}
+
+.loading-bar-track {
+  width: min(300px, 78vw);
+  height: 6px;
+  background: rgba(148, 163, 184, 0.16);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid rgba(79, 209, 245, 0.22);
+  margin-bottom: 12px;
+}
+
+.loading-bar-fill {
+  width: 14%;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #38bdf8, #f6b93b);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.65);
+  transition: width 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.loading-status {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+@keyframes spinOrbit {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes floatLogo {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-6px) scale(1.03); }
+}
+
+/* Title Card Logo Header */
+.title-brand-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 6px;
+}
+
+.title-logo-ring {
+  flex-shrink: 0;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(79, 209, 245, 0.55);
+  background: radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.85), rgba(4, 7, 20, 0.95));
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 22px rgba(56, 189, 248, 0.28);
+}
+
+.title-logo-img {
+  width: 58px;
+  height: 58px;
+  display: block;
+}
+
+.title-brand-header .game-title {
+  margin-bottom: 0;
+}
+
+/* Top-Left HUD Corner Logo Badge (matches PPT corner emblem) */
+.brand-logo-wrap {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(79, 209, 245, 0.65);
+  background: radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.9), rgba(3, 5, 10, 0.96));
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 12px rgba(79, 209, 245, 0.32);
+}
+
+.brand-logo-img {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+
 /* Buttons */
 .btn {
   border: 1px solid var(--glass-border);
