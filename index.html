@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SOLAR ODYSSEY 3D — Simulasi Tata Surya & Lab Grafika Komputer</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <canvas id="gl-canvas"></canvas>
+
+  <!-- Hover Tooltip -->
+  <div id="hover-tooltip" class="hover-tooltip hidden">
+    <span class="tooltip-dot"></span>
+    <span id="tooltip-name">Bumi</span>
+    <span class="tooltip-hint">Klik untuk inspeksi</span>
+  </div>
+
+  <!-- Title / Splash Overlay -->
+  <div id="title-overlay" class="title-overlay">
+    <div class="title-card">
+      <div class="badge-row">
+        <span class="badge">WEBGL2 · GLSL ES 3.00</span>
+        <span class="badge badge-accent">100% OFFLINE STANDALONE</span>
+      </div>
+      <h1 class="game-title">SOLAR ODYSSEY <span>3D</span></h1>
+      <p class="game-subtitle">
+        Simulasi Eksplorasi Tata Surya Interaktif &amp; Laboratorium Pipeline Grafika Komputer
+      </p>
+      <div class="title-features">
+        <div class="feat-item">
+          <strong>Tata Surya 3D Real-Time</strong>
+          <span>Matahari plasma FBM, 8 planet berotasi &amp; berevolusi, satelit alami, cincin Saturnus, &amp; sabuk asteroid instanced.</span>
+        </div>
+        <div class="feat-item">
+          <strong>Inspeksi &amp; Eksplorasi Bebas</strong>
+          <span>Klik planet mana saja untuk mengunci orbit &amp; melihat telemetri, atau kendalikan pesawat dengan WASD + Mouse.</span>
+        </div>
+        <div class="feat-item">
+          <strong>Lab Pipeline Grafika Komputer</strong>
+          <span>Eksperimen langsung Proyeksi Ortografik/Perspektif, Clipping, Tessellation, Culling, Blinn-Phong, Tekstur UV, &amp; Matriks 4×4.</span>
+        </div>
+      </div>
+      <div class="title-actions">
+        <button id="btn-start-game" class="btn btn-primary btn-lg">Mulai Jelajahi Tata Surya</button>
+        <button id="btn-open-credits-title" class="btn btn-glass btn-lg">Credits &amp; Tim Pembuat</button>
+      </div>
+      <div class="title-footer-note">
+        Proyek Akhir Mata Kuliah Grafika Komputer · Ketua Tim: <strong>Rajif Aidil Putra</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top HUD Bar -->
+  <header id="top-hud" class="top-hud hidden">
+    <div class="hud-left">
+      <div class="brand-mini">
+        <span class="brand-orb"></span>
+        <div>
+          <div class="brand-title">SOLAR ODYSSEY 3D</div>
+          <div class="brand-sub" id="hud-mode-label">Mode Kamera Orbit · Tata Surya</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hud-center">
+      <div class="control-pill">
+        <button id="btn-camera-orbit" class="pill-btn active" title="Kamera Orbit (Drag & Scroll)">Orbit</button>
+        <button id="btn-camera-ship" class="pill-btn" title="Mode Pesawat Bebas (WASD + Q/E + Drag)">Pesawat (WASD)</button>
+      </div>
+      <div class="control-pill">
+        <button id="btn-hero-align" class="pill-btn" title="Susun planet dalam formasi sejajar ikonik">Formasi Sejajar</button>
+        <button id="btn-reset-view" class="pill-btn" title="Reset posisi kamera awal">Reset Kamera</button>
+      </div>
+      <div class="control-pill speed-pill">
+        <span class="pill-label">Waktu:</span>
+        <button class="speed-btn" data-speed="0">Pause</button>
+        <button class="speed-btn active" data-speed="0.4">0.4×</button>
+        <button class="speed-btn" data-speed="1">1×</button>
+        <button class="speed-btn" data-speed="3">3×</button>
+        <button class="speed-btn" data-speed="10">10×</button>
+      </div>
+    </div>
+
+    <div class="hud-right">
+      <button id="btn-toggle-audio" class="btn btn-glass btn-sm" title="Suara Ambient & Efek">Audio: ON</button>
+      <button id="btn-toggle-cglab" class="btn btn-accent btn-sm">Lab Grafika Komputer</button>
+      <button id="btn-open-credits" class="btn btn-glass btn-sm">Credits &amp; Tim</button>
+    </div>
+  </header>
+
+  <!-- Planet Quick Selector Dock (Bottom) -->
+  <nav id="planet-dock" class="planet-dock hidden" aria-label="Navigasi Benda Langit">
+    <div class="dock-inner" id="planet-dock-list"></div>
+  </nav>
+
+  <!-- Planet Telemetry & Information Card (Left Drawer) -->
+  <aside id="planet-card" class="planet-card hidden">
+    <div class="card-header">
+      <div>
+        <div class="planet-category" id="card-category">PLANET KEBUMIAN</div>
+        <h2 class="planet-name" id="card-name">Bumi</h2>
+        <div class="planet-tagline" id="card-tagline">Satu-satunya dunia yang diketahui memiliki kehidupan</div>
+      </div>
+      <button id="btn-close-card" class="icon-close" title="Tutup kartu informasi">&times;</button>
+    </div>
+
+    <div class="card-nav-row">
+      <button id="btn-prev-body" class="btn btn-glass btn-xs">&larr; Sebelumnya</button>
+      <button id="btn-focus-close" class="btn btn-primary btn-xs">Zoom Dekat</button>
+      <button id="btn-next-body" class="btn btn-glass btn-xs">Berikutnya &rarr;</button>
+    </div>
+
+    <p class="planet-desc" id="card-desc"></p>
+
+    <div class="metrics-grid" id="card-metrics"></div>
+
+    <div class="card-section">
+      <div class="section-label">Komposisi &amp; Karakteristik Utama</div>
+      <div id="card-composition" class="comp-list"></div>
+    </div>
+
+    <div class="card-section">
+      <div class="section-label">Fakta Menarik</div>
+      <div class="fact-box" id="card-fact"></div>
+    </div>
+  </aside>
+
+  <!-- Computer Graphics Laboratory Drawer (Right Drawer) -->
+  <aside id="cg-lab-drawer" class="cg-drawer hidden">
+    <div class="drawer-header">
+      <div>
+        <div class="drawer-kicker">INSPEKTOR PIPELINE WEBGL2</div>
+        <h3>Lab Grafika Komputer</h3>
+      </div>
+      <button id="btn-close-cglab" class="icon-close">&times;</button>
+    </div>
+
+    <div class="drawer-tabs">
+      <button class="tab-btn active" data-tab="tab-proj">1. Proyeksi &amp; Ruang</button>
+      <button class="tab-btn" data-tab="tab-mesh">2. Mesh &amp; Clipping</button>
+      <button class="tab-btn" data-tab="tab-light">3. Cahaya &amp; Tekstur</button>
+    </div>
+
+    <div class="drawer-body">
+      <!-- TAB 1: Projection, Viewing Box, World Coordinates, Transform Matrix -->
+      <div id="tab-proj" class="tab-pane active">
+        <div class="lab-group">
+          <div class="lab-title">Materi 2: Proyeksi &amp; Viewing Box</div>
+          <div class="segmented">
+            <button id="btn-proj-persp" class="seg-btn active">Perspective</button>
+            <button id="btn-proj-ortho" class="seg-btn">Orthographic</button>
+          </div>
+          <div class="slider-row" id="row-fov">
+            <label>Field of View (FOV): <span id="val-fov">45°</span></label>
+            <input type="range" id="slider-fov" min="20" max="85" value="45" />
+          </div>
+          <div class="slider-row hidden" id="row-ortho-size">
+            <label>Ortho Viewing Box Half-Height: <span id="val-ortho-size">28.0</span></label>
+            <input type="range" id="slider-ortho-size" min="8" max="75" value="28" />
+          </div>
+        </div>
+
+        <div class="lab-group">
+          <div class="lab-title">Materi 2 &amp; 8: World Coordinates &amp; Orbit</div>
+          <label class="toggle-row">
+            <span>Tampilkan World Axes (X=Merah, Y=Hijau, Z=Biru)</span>
+            <input type="checkbox" id="chk-axes" checked />
+          </label>
+          <label class="toggle-row">
+            <span>Tampilkan Lintasan Orbit Elips</span>
+            <input type="checkbox" id="chk-orbits" checked />
+          </label>
+          <label class="toggle-row">
+            <span>Tampilkan Sabuk Asteroid (450 Instanced Mesh)</span>
+            <input type="checkbox" id="chk-asteroids" checked />
+          </label>
+          <label class="toggle-row">
+            <span>Kemiringan Sumbu Planet (Axial Tilt)</span>
+            <input type="checkbox" id="chk-tilt" checked />
+          </label>
+        </div>
+
+        <div class="lab-group">
+          <div class="lab-title">Materi 5: Matriks Transformasi Model 4×4 (M = T·R·S)</div>
+          <div class="matrix-target">Objek Terpilih: <strong id="matrix-body-name">Bumi</strong></div>
+          <pre id="matrix-readout" class="matrix-box"></pre>
+        </div>
+      </div>
+
+      <!-- TAB 2: Clipping, Primitives, Curved Tessellation, Culling, VAO/VBO -->
+      <div id="tab-mesh" class="tab-pane">
+        <div class="lab-group">
+          <div class="lab-title">Materi 3: View-Frustum Clipping Planes</div>
+          <div class="slider-row">
+            <label>Near Clipping Plane: <span id="val-near">0.2</span></label>
+            <input type="range" id="slider-near" min="0.2" max="45" step="0.2" value="0.2" />
+          </div>
+          <div class="slider-row">
+            <label>Far Clipping Plane: <span id="val-far">600</span></label>
+            <input type="range" id="slider-far" min="40" max="600" step="5" value="600" />
+          </div>
+          <div class="lab-hint">Geser Near Plane maju untuk memotong penampang bola planet secara real-time!</div>
+        </div>
+
+        <div class="lab-group">
+          <div class="lab-title">Materi 3 &amp; 7: Primitives, Triangulasi &amp; Orientation</div>
+          <div class="segmented">
+            <button class="prim-btn active" data-prim="TRIANGLES">Solid</button>
+            <button class="prim-btn" data-prim="LINES">Wireframe</button>
+            <button class="prim-btn" data-prim="POINTS">Points</button>
+          </div>
+          <div class="slider-row">
+            <label>Resolusi Segmen Bola Lengkung: <span id="val-segments">48 × 24</span></label>
+            <input type="range" id="slider-segments" min="12" max="80" step="4" value="48" />
+          </div>
+          <label class="toggle-row">
+            <span>Back-Face Culling (gl.CULL_FACE)</span>
+            <input type="checkbox" id="chk-cull" checked />
+          </label>
+          <div class="segmented">
+            <button id="btn-wind-ccw" class="seg-btn active">Front: CCW</button>
+            <button id="btn-wind-cw" class="seg-btn">Front: CW (Invert)</button>
+          </div>
+        </div>
+
+        <div class="lab-group">
+          <div class="lab-title">Materi 4: Statistik VAO, VBO &amp; Mouse Raycast</div>
+          <div class="stats-box" id="gpu-stats-box"></div>
+        </div>
+      </div>
+
+      <!-- TAB 3: Convexity & Interpolation, Color & Light (Blinn-Phong), Texture -->
+      <div id="tab-light" class="tab-pane">
+        <div class="lab-group">
+          <div class="lab-title">Materi 6: Interpolasi Normal Permukaan</div>
+          <div class="segmented">
+            <button id="btn-shade-smooth" class="seg-btn active">Smooth Phong Interpolation</button>
+            <button id="btn-shade-flat" class="seg-btn">Flat Shading (Faceted)</button>
+          </div>
+        </div>
+
+        <div class="lab-group">
+          <div class="lab-title">Materi 9: Model Pencahayaan Blinn-Phong</div>
+          <label class="toggle-row">
+            <span>Komponen Ambient (I_a · k_a)</span>
+            <input type="checkbox" id="chk-ambient" checked />
+          </label>
+          <label class="toggle-row">
+            <span>Komponen Diffuse (N · L)</span>
+            <input type="checkbox" id="chk-diffuse" checked />
+          </label>
+          <label class="toggle-row">
+            <span>Komponen Specular (N · H)^n</span>
+            <input type="checkbox" id="chk-specular" checked />
+          </label>
+          <label class="toggle-row">
+            <span>Hamburan Atmosfer Fresnel</span>
+            <input type="checkbox" id="chk-atmosphere" checked />
+          </label>
+          <div class="slider-row">
+            <label>Intensitas Cahaya Matahari: <span id="val-sun-int">1.35</span></label>
+            <input type="range" id="slider-sun-int" min="0.4" max="2.2" step="0.05" value="1.35" />
+          </div>
+        </div>
+
+        <div class="lab-group">
+          <div class="lab-title">Materi 10: Pemetaan Tekstur UV Prosedural</div>
+          <label class="toggle-row">
+            <span>Aktifkan Tekstur UV Equirectangular</span>
+            <input type="checkbox" id="chk-texture" checked />
+          </label>
+          <label class="toggle-row">
+            <span>Lapisan Awan &amp; Lampu Kota Malam Bumi</span>
+            <input type="checkbox" id="chk-earth-layers" checked />
+          </label>
+          <label class="toggle-row">
+            <span>Mipmap Trilinear Filtering</span>
+            <input type="checkbox" id="chk-mipmap" checked />
+          </label>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Flight Controls Helper Pill -->
+  <div id="flight-guide" class="flight-guide hidden">
+    <strong>Kontrol Pesawat:</strong> <code>W A S D</code> Terbang · <code>Q / E</code> Naik/Turun · <code>Shift</code> Boost · <code>Drag Mouse</code> Arahkan Pandangan · <code>Klik Planet</code> Inspeksi
+  </div>
+
+  <!-- Credits & Team Contribution Multiplier Modal -->
+  <div id="credits-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <div class="drawer-kicker">DOKUMENTASI TIM &amp; PENILAIAN PROYEK</div>
+          <h2>Credits &amp; Multiplier Kontribusi Anggota</h2>
+        </div>
+        <button id="btn-close-credits" class="icon-close">&times;</button>
+      </div>
+
+      <p class="modal-desc">
+        Aplikasi interaktif 3D standalone (offline) untuk mata kuliah <strong>Grafika Komputer</strong>.
+        Ketua tim dapat mengatur <strong>Multiplier Nilai (0.00 – 1.00)</strong> berdasarkan kontribusi masing-masing anggota (1–4 orang). Perubahan otomatis tersimpan secara lokal.
+      </p>
+
+      <div class="team-table-wrap">
+        <table class="team-table">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Nama Lengkap</th>
+              <th>NIM</th>
+              <th>Peran / Kontribusi</th>
+              <th>Multiplier (0–1)</th>
+            </tr>
+          </thead>
+          <tbody id="team-tbody"></tbody>
+        </table>
+      </div>
+
+      <div class="modal-actions-bar">
+        <div class="left-btns">
+          <button id="btn-add-member" class="btn btn-glass btn-sm">+ Tambah Anggota (Maks 4)</button>
+          <button id="btn-reset-team" class="btn btn-glass btn-sm">Reset Default</button>
+        </div>
+        <div class="right-btns">
+          <button id="btn-copy-credits" class="btn btn-accent btn-sm">Salin Teks Laporan</button>
+          <button id="btn-done-credits" class="btn btn-primary btn-sm">Simpan &amp; Tutup</button>
+        </div>
+      </div>
+      <div id="copy-feedback" class="copy-feedback"></div>
+    </div>
+  </div>
+
+  <!-- Modular JavaScript Pipeline (Works both offline file:// and HTTP server) -->
+  <script src="js/namespace.js"></script>
+  <script src="js/math.js"></script>
+  <script src="js/shaders.js"></script>
+  <script src="js/textures.js"></script>
+  <script src="js/geometry.js"></script>
+  <script src="js/planetData.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
