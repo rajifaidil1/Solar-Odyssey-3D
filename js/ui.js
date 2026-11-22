@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SOLAR ODYSSEY 3D — HUD, Planet Telemetry Card, CG Lab & Team Credits Modal
+   SOLAR ODYSSEY — HUD, Planet Telemetry Card, CG Lab & Team Credits Modal
    ========================================================================== */
 
 SolarOdyssey.UI = (function () {
@@ -456,7 +456,7 @@ SolarOdyssey.UI = (function () {
 
     document.getElementById("btn-copy-credits").addEventListener("click", async () => {
       const lines = [
-        "=== CREDITS & MULTIPLIER KONTRIBUSI TIM — SOLAR ODYSSEY 3D ===",
+        "=== CREDITS & MULTIPLIER KONTRIBUSI TIM — SOLAR ODYSSEY ===",
         "Teknologi: Native WebGL2, GLSL ES 3.00, JavaScript Modular, Canvas 2D Procedural Textures, WebAudio API",
         ""
       ];

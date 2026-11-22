@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SOLAR ODYSSEY 3D — Parametric 3D Mesh Builders & WebGL2 VAO/VBO Management
+   SOLAR ODYSSEY — Parametric 3D Mesh Builders & WebGL2 VAO/VBO Management
    (Materi 2: World Coordinate Axes; Materi 3: Curved Object Tessellation;
     Materi 4: VAO, VBO, EBO; Materi 7: Triangulation & CCW Orientation)
    ========================================================================== */

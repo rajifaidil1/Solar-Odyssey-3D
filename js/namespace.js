@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SOLAR ODYSSEY 3D — Global Namespace & Shared Application State
+   SOLAR ODYSSEY — Global Namespace & Shared Application State
    ========================================================================== */
 
 window.SolarOdyssey = window.SolarOdyssey || {};

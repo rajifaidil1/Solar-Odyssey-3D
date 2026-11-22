@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SOLAR ODYSSEY 3D — Astronomical Database & Orbital Mechanics Parameters
+   SOLAR ODYSSEY — Astronomical Database & Orbital Mechanics Parameters
    ========================================================================== */
 
 SolarOdyssey.PlanetData = (function () {

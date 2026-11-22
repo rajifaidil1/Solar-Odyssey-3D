@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SOLAR ODYSSEY 3D — GLSL ES 3.00 Vertex & Fragment Shaders
+   SOLAR ODYSSEY — GLSL ES 3.00 Vertex & Fragment Shaders
    (Materi 6: Smooth vs Flat Normal Interpolation;
     Materi 9: Blinn-Phong Illumination & Fresnel Atmosphere;
     Materi 10: Multi-layer UV Texture Mapping & Ring Shadowing)

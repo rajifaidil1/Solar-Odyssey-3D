@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SOLAR ODYSSEY 3D — Main Entry Point, Input Controller & Render Loop
+   SOLAR ODYSSEY — Main Entry Point, Input Controller & Render Loop
    ========================================================================== */
 
 (function () {

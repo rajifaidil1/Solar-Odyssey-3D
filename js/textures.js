@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SOLAR ODYSSEY 3D — Procedural High-Resolution Planet & Ring Texture Generator
+   SOLAR ODYSSEY — Procedural High-Resolution Planet & Ring Texture Generator
    (Materi 10: Texture Mapping, UV Coordinates & Mipmap Filtering)
    ========================================================================== */
 

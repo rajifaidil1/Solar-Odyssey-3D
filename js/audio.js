@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SOLAR ODYSSEY 3D — Procedural WebAudio Synthesizer (Zero External Files)
+   SOLAR ODYSSEY — Procedural WebAudio Synthesizer (Zero External Files)
    ========================================================================== */
 
 SolarOdyssey.Audio = (function () {

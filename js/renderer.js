@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SOLAR ODYSSEY 3D — WebGL2 Rendering Pipeline, Camera & Scene Graph
+   SOLAR ODYSSEY — WebGL2 Rendering Pipeline, Camera & Scene Graph
    ========================================================================== */
 
 SolarOdyssey.Renderer = (function () {

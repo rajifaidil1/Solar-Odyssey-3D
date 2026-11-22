@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 DIR="$(cd "$(dirname "$0")" && pwd)"
-echo "Membuka SOLAR ODYSSEY 3D di browser..."
+echo "Membuka SOLAR ODYSSEY di browser..."
 if command -v xdg-open >/dev/null 2>&1; then
   xdg-open "$DIR/index.html"
 elif command -v open >/dev/null 2>&1; then

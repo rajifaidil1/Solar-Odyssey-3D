@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SOLAR ODYSSEY 3D — 3D Linear Algebra, Matrices & Ray-Sphere Intersection
+   SOLAR ODYSSEY — 3D Linear Algebra, Matrices & Ray-Sphere Intersection
    (Materi 2: Orthographic/Perspective Projection, World Coordinates;
     Materi 4: Mouse 3D Raycasting; Materi 5: Transformation Matrices)
    ========================================================================== */

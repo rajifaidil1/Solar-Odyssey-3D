@@ -1,6 +1,6 @@
-# Pemetaan Materi Komputer Grafis (Pertemuan 1–10) pada Solar Odyssey 3D
+# Pemetaan Materi Komputer Grafis (Pertemuan 1–10) pada Solar Odyssey
 
-Dokumen ini disusun sebagai bahan lampiran teknis untuk **Laporan Proyek Akhir Komputer Grafis** (Dosen Pengampu: Agi Putra Kharisma), yang menjelaskan implementasi setiap topik perkuliahan di dalam kode sumber **Solar Odyssey 3D**.
+Dokumen ini disusun sebagai bahan lampiran teknis untuk **Laporan Proyek Akhir Komputer Grafis** (Dosen Pengampu: Agi Putra Kharisma), yang menjelaskan implementasi setiap topik perkuliahan di dalam kode sumber **Solar Odyssey**.
 
 ---
 
@@ -13,7 +13,7 @@ Dokumen ini disusun sebagai bahan lampiran teknis untuk **Laporan Proyek Akhir K
 - **Implementasi Kode**:
   - `js/math.js`: `mat4Perspective()`, `mat4Ortho()`, dan `mat4LookAt()`.
   - `js/geometry.js`: `createWorldAxesMesh()` menggambar sumbu koordinat dunia **+X (Merah)**, **+Y (Hijau)**, dan **+Z (Biru)**.
-  - **Fitur Interaktif**: Pada tab **1. Proyeksi & Ruang** di *Lab Grafika Komputer*, pengguna dapat beralih secara langsung antara mode **Perspective** dan **Orthographic** serta mengatur ukuran *Viewing Box*.
+  - **Fitur Interaktif**: Pada tab **1. Proyeksi & Ruang** di *Lab Komputer Grafis*, pengguna dapat beralih secara langsung antara mode **Perspective** dan **Orthographic** serta mengatur ukuran *Viewing Box*.
 
 ## 3. Clipping, Color, Primitives, Curved Object, 3D (Pertemuan 3)
 - **Konsep**:

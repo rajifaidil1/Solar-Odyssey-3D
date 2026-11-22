@@ -1,6 +1,6 @@
-# SOLAR ODYSSEY 3D — Simulasi Tata Surya & Lab Grafika Komputer
+# SOLAR ODYSSEY — Simulasi Tata Surya & Lab Komputer Grafis
 
-Aplikasi game edukasi dan eksplorasi luar angkasa 3D interaktif berbasis **Native WebGL2** dan **GLSL ES 3.00** yang dirancang khusus untuk memenuhi seluruh spesifikasi tugas proyek mata kuliah **Grafika Komputer**.
+Aplikasi game edukasi dan eksplorasi luar angkasa 3D interaktif berbasis **Native WebGL2** dan **GLSL ES 3.00** yang dirancang khusus untuk memenuhi seluruh spesifikasi tugas proyek mata kuliah **Komputer Grafis**.
 
 ## Ketentuan Proyek yang Dipenuhi
 - **Jenis Aplikasi**: Interactive Computer Graphics (3D Real-Time Rendering Engine)
@@ -17,7 +17,7 @@ Aplikasi game edukasi dan eksplorasi luar angkasa 3D interaktif berbasis **Nativ
 
 ## Struktur Folder Proyek
 ```text
-Solar-Odyssey-3D/
+Solar-Odyssey/
 ├── index.html                        # Struktur halaman utama, HUD, & panel interaktif
 ├── README.md                         # Panduan instalasi & penggunaan aplikasi
 ├── DOKUMENTASI_GRAFIKA_KOMPUTER.md   # Pemetaan materi kuliah Pertemuan 1–10 ke kode sumber
@@ -42,4 +42,4 @@ Solar-Odyssey-3D/
 - **Klik Benda Langit (Matahari, Planet, atau Bulan)**: Mengunci kamera mengikuti orbit planet tersebut dan menampilkan kartu informasi astronomi lengkap.
 - **Mode Kamera Orbit**: Klik-seret (*drag*) untuk memutar sudut pandang, *scroll wheel* untuk zoom.
 - **Mode Pesawat (WASD)**: Klik tombol `Pesawat (WASD)` di bilah atas, lalu gunakan `W A S D` untuk terbang, `Q / E` untuk naik/turun, `Shift` untuk turbo, dan seret mouse untuk mengarahkan pandangan.
-- **Lab Grafika Komputer**: Klik tombol `Lab Grafika Komputer` di kanan atas untuk menguji langsung konsep Proyeksi, Clipping Planes, Wireframe, Back-Face Culling, Smooth vs. Flat Shading, Blinn-Phong Lighting, Tekstur UV, dan Matriks 4×4.
+- **Lab Komputer Grafis**: Klik tombol `Lab Komputer Grafis` di kanan atas untuk menguji langsung konsep Proyeksi, Clipping Planes, Wireframe, Back-Face Culling, Smooth vs. Flat Shading, Blinn-Phong Lighting, Tekstur UV, dan Matriks 4×4.
