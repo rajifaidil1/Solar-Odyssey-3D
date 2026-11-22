@@ -195,6 +195,14 @@
             <span>Kemiringan Sumbu Planet (Axial Tilt)</span>
             <input type="checkbox" id="chk-tilt" checked />
           </label>
+          <label class="toggle-row">
+            <span>Animasi Revolusi Orbit (T_orbit)</span>
+            <input type="checkbox" id="chk-anim-orbit" checked />
+          </label>
+          <label class="toggle-row">
+            <span>Animasi Rotasi Sumbu Planet (R_spin)</span>
+            <input type="checkbox" id="chk-anim-spin" checked />
+          </label>
         </div>
 
         <div class="lab-group">
@@ -249,11 +257,13 @@
       <!-- TAB 3: Convexity & Interpolation, Color & Light (Blinn-Phong), Texture -->
       <div id="tab-light" class="tab-pane">
         <div class="lab-group">
-          <div class="lab-title">Materi 6: Interpolasi Normal Permukaan</div>
+          <div class="lab-title">Materi 6: Interpolasi Pencahayaan (Shading)</div>
           <div class="segmented">
-            <button id="btn-shade-smooth" class="seg-btn active">Smooth Phong Interpolation</button>
-            <button id="btn-shade-flat" class="seg-btn">Flat Shading (Faceted)</button>
+            <button id="btn-shade-phong" class="seg-btn active">Phong</button>
+            <button id="btn-shade-gouraud" class="seg-btn">Gouraud</button>
+            <button id="btn-shade-flat" class="seg-btn">Flat</button>
           </div>
+          <div class="lab-hint">Turunkan segmen bola (Tab 2) ke 12×6 untuk melihat beda Phong, Gouraud (per-vertex), &amp; Flat!</div>
         </div>
 
         <div class="lab-group">
@@ -278,6 +288,10 @@
             <label>Intensitas Cahaya Matahari: <span id="val-sun-int">1.35</span></label>
             <input type="range" id="slider-sun-int" min="0.4" max="2.2" step="0.05" value="1.35" />
           </div>
+          <div class="slider-row">
+            <label>Skala Specular Shininess (n): <span id="val-shininess">1.00×</span></label>
+            <input type="range" id="slider-shininess" min="0.15" max="3.0" step="0.05" value="1.0" />
+          </div>
         </div>
 
         <div class="lab-group">
@@ -290,10 +304,14 @@
             <span>Lapisan Awan &amp; Lampu Kota Malam Bumi</span>
             <input type="checkbox" id="chk-earth-layers" checked />
           </label>
-          <label class="toggle-row">
-            <span>Mipmap Trilinear Filtering</span>
-            <input type="checkbox" id="chk-mipmap" checked />
-          </label>
+          <div class="slider-row">
+            <label>Mode Texture Filtering:</label>
+            <div class="segmented">
+              <button id="btn-tex-nearest" class="seg-btn" data-filter="nearest">Nearest</button>
+              <button id="btn-tex-linear" class="seg-btn" data-filter="linear">Linear</button>
+              <button id="btn-tex-mipmap" class="seg-btn active" data-filter="mipmap">Mipmap</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -369,7 +387,10 @@
         <div id="quiz-feedback-box" class="quiz-feedback-box hidden">
           <div class="feedback-status" id="feedback-status"></div>
           <p class="feedback-explanation" id="feedback-explanation"></p>
-          <button id="btn-next-question" class="btn btn-primary btn-md">Lanjut ke Soal Berikutnya &rarr;</button>
+          <div class="feedback-actions-row">
+            <button id="btn-quiz-focus-3d" class="btn btn-glass btn-md hidden">Lihat di 3D</button>
+            <button id="btn-next-question" class="btn btn-primary btn-md">Lanjut ke Soal Berikutnya &rarr;</button>
+          </div>
         </div>
       </div>
 

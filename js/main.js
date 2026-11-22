@@ -38,7 +38,10 @@
         UI.updateLiveInspector();
       }
 
-      State.simTime += rawDt * State.timeSpeed;
+      const dtSim = rawDt * State.timeSpeed;
+      State.simTime += dtSim;
+      if (State.cg.animateOrbit) State.orbitTime += dtSim;
+      if (State.cg.animateSpin) State.spinTime += dtSim;
       Renderer.render(rawDt, keys);
 
       requestAnimationFrame(frame);

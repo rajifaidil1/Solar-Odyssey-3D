@@ -311,11 +311,20 @@ SolarOdyssey.Textures = (function () {
     return bank;
   }
 
-  function updateFiltering(gl, bank, useMipmap) {
-    const minFilter = useMipmap ? gl.LINEAR_MIPMAP_LINEAR : gl.LINEAR;
+  function updateFiltering(gl, bank, filterMode) {
+    let minFilter = gl.LINEAR_MIPMAP_LINEAR;
+    let magFilter = gl.LINEAR;
+    if (filterMode === "nearest" || filterMode === false) {
+      minFilter = filterMode === "nearest" ? gl.NEAREST : gl.LINEAR;
+      magFilter = filterMode === "nearest" ? gl.NEAREST : gl.LINEAR;
+    } else if (filterMode === "linear") {
+      minFilter = gl.LINEAR;
+      magFilter = gl.LINEAR;
+    }
     for (const key of Object.keys(bank)) {
       gl.bindTexture(gl.TEXTURE_2D, bank[key]);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, minFilter);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, magFilter);
     }
   }
 

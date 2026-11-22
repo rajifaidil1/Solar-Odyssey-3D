@@ -58,7 +58,7 @@ SolarOdyssey.Renderer = (function () {
 
     const S = SolarOdyssey.Shaders;
     progSun    = S.createProgram(gl, S.STANDARD_VS, S.SUN_FS);
-    progPlanet = S.createProgram(gl, S.STANDARD_VS, S.PLANET_FS);
+    progPlanet = S.createProgram(gl, S.PLANET_VS, S.PLANET_FS);
     progRing   = S.createProgram(gl, S.STANDARD_VS, S.RING_FS);
     progGlow   = S.createProgram(gl, S.GLOW_VS, S.GLOW_FS);
     progLine   = S.createProgram(gl, S.LINE_VS, S.LINE_FS);
@@ -100,9 +100,9 @@ SolarOdyssey.Renderer = (function () {
     sphereMesh = SolarOdyssey.Geometry.createSphereMesh(gl, segments);
   }
 
-  function updateTextureFiltering(useMipmap) {
+  function updateTextureFiltering(filterMode) {
     if (!gl) return;
-    SolarOdyssey.Textures.updateFiltering(gl, textures, useMipmap);
+    SolarOdyssey.Textures.updateFiltering(gl, textures, filterMode);
   }
 
   function resize() {
@@ -131,6 +131,8 @@ SolarOdyssey.Renderer = (function () {
   function triggerHeroAlignment() {
     // Align all planets in a dramatic sweeping arc to the right of the Sun
     State.simTime = 0.0;
+    State.orbitTime = 0.0;
+    State.spinTime = 0.0;
   }
 
   function focusOnBody(bodyId, closeUp = false) {
@@ -205,13 +207,14 @@ SolarOdyssey.Renderer = (function () {
   }
 
   function updateCelestialTransforms() {
-    const t = State.simTime;
+    const tOrbit = State.orbitTime;
+    const tSpin = State.spinTime;
     const useTilt = State.cg.useAxialTilt;
 
     for (const b of Bodies) {
       let x = 0, y = 0, z = 0;
       if (b.orbitRadius > 0) {
-        const angle = b.heroAngle + t * b.orbitSpeed;
+        const angle = b.heroAngle + tOrbit * b.orbitSpeed;
         const a = b.orbitRadius;
         const e = b.eccentricity || 0.01;
         const semiMinor = a * Math.sqrt(1 - e * e);
@@ -229,7 +232,7 @@ SolarOdyssey.Renderer = (function () {
       if (useTilt && b.axialTiltDeg) {
         model = M.mat4RotateZ(model, b.axialTiltDeg * M.DEG2RAD);
       }
-      model = M.mat4RotateY(model, t * b.spinSpeed);
+      model = M.mat4RotateY(model, tSpin * b.spinSpeed);
       model = M.mat4Scale(model, [b.radius, b.radius, b.radius]);
 
       bodyTransforms[b.id] = {
@@ -241,14 +244,14 @@ SolarOdyssey.Renderer = (function () {
       // Update child moons (Materi 8: Hierarchical Scene Graph)
       if (b.moons) {
         for (const moon of b.moons) {
-          const mAngle = t * moon.orbitSpeed + 0.6;
+          const mAngle = tOrbit * moon.orbitSpeed + 0.6;
           const mx = x + Math.cos(mAngle) * moon.orbitRadius;
           const my = y + Math.sin(mAngle * 0.7) * 0.18;
           const mz = z + Math.sin(mAngle) * moon.orbitRadius;
 
           let mModel = M.mat4Identity();
           mModel = M.mat4Translate(mModel, [mx, my, mz]);
-          mModel = M.mat4RotateY(mModel, t * moon.spinSpeed);
+          mModel = M.mat4RotateY(mModel, tSpin * moon.spinSpeed);
           mModel = M.mat4Scale(mModel, [moon.radius, moon.radius, moon.radius]);
 
           bodyTransforms[moon.id] = {
@@ -380,9 +383,10 @@ SolarOdyssey.Renderer = (function () {
     gl.uniform1f(gl.getUniformLocation(progPlanet, "uSunIntensity"), cg.sunIntensity);
     gl.uniform1f(gl.getUniformLocation(progPlanet, "uTime"), State.simTime);
 
+    const shadingInt = cg.shadingMode === "gouraud" ? 1 : (cg.shadingMode === "flat" ? 2 : 0);
     gl.uniform1i(gl.getUniformLocation(progPlanet, "uUseTexture"), cg.useTexture ? 1 : 0);
     gl.uniform1i(gl.getUniformLocation(progPlanet, "uUseEarthLayers"), cg.useEarthLayers ? 1 : 0);
-    gl.uniform1i(gl.getUniformLocation(progPlanet, "uSmoothShading"), cg.smoothShading ? 1 : 0);
+    gl.uniform1i(gl.getUniformLocation(progPlanet, "uShadingMode"), shadingInt);
     gl.uniform1i(gl.getUniformLocation(progPlanet, "uUseAmbient"), cg.useAmbient ? 1 : 0);
     gl.uniform1i(gl.getUniformLocation(progPlanet, "uUseDiffuse"), cg.useDiffuse ? 1 : 0);
     gl.uniform1i(gl.getUniformLocation(progPlanet, "uUseSpecular"), cg.useSpecular ? 1 : 0);
@@ -396,6 +400,8 @@ SolarOdyssey.Renderer = (function () {
     gl.bindTexture(gl.TEXTURE_2D, textures.earthNight);
     gl.uniform1i(gl.getUniformLocation(progPlanet, "uTexNight"), 2);
 
+    const shinScale = cg.shininessScale || 1.0;
+
     for (const b of Bodies) {
       if (b.isSun) continue;
       const tr = bodyTransforms[b.id];
@@ -404,7 +410,7 @@ SolarOdyssey.Renderer = (function () {
       gl.uniform3fv(gl.getUniformLocation(progPlanet, "uBaseColor"), b.baseColor);
       gl.uniform3fv(gl.getUniformLocation(progPlanet, "uAtmoColor"), b.atmoColor);
       gl.uniform1f(gl.getUniformLocation(progPlanet, "uAtmoStrength"), b.atmoStrength);
-      gl.uniform1f(gl.getUniformLocation(progPlanet, "uShininess"), b.shininess);
+      gl.uniform1f(gl.getUniformLocation(progPlanet, "uShininess"), Math.max(2.0, Math.min(256.0, b.shininess * shinScale)));
       gl.uniform1f(gl.getUniformLocation(progPlanet, "uSpecularStrength"), b.specularStrength);
       gl.uniform1i(gl.getUniformLocation(progPlanet, "uHasEarthLayers"), b.hasEarthLayers ? 1 : 0);
       gl.uniform1i(gl.getUniformLocation(progPlanet, "uIsSelected"), State.selectedBodyId === b.id ? 1 : 0);

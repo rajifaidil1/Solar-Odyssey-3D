@@ -9,6 +9,8 @@ SolarOdyssey.State = {
   paused: false,
   timeSpeed: 0.4,
   simTime: 0.0,
+  orbitTime: 0.0,
+  spinTime: 0.0,
 
   // Camera modes: "orbit" | "ship"
   cameraMode: "orbit",
@@ -28,19 +30,22 @@ SolarOdyssey.State = {
     showOrbits: true,
     showAsteroids: true,
     useAxialTilt: true,
+    animateOrbit: true,
+    animateSpin: true,
     primitiveMode: "TRIANGLES", // "TRIANGLES" | "LINES" | "POINTS"
     sphereSegments: 48,
     backfaceCulling: true,
     windingOrder: "CCW", // "CCW" | "CW"
-    smoothShading: true,
+    shadingMode: "phong", // "phong" | "gouraud" | "flat"
     useAmbient: true,
     useDiffuse: true,
     useSpecular: true,
     useAtmosphere: true,
     sunIntensity: 1.35,
+    shininessScale: 1.0,
     useTexture: true,
     useEarthLayers: true,
-    useMipmap: true
+    textureFilter: "mipmap" // "nearest" | "linear" | "mipmap"
   },
 
   // GPU telemetry counters (Pertemuan 4)

@@ -135,13 +135,79 @@ SolarOdyssey.Shaders = (function () {
     fragColor = vec4(col, 1.0);
   }`;
 
-  // 3. Planet Blinn-Phong + Smooth/Flat Normal Interpolation + Earth Night/Cloud + Atmosphere
+  // 3a. Planet Vertex Shader (Supports Phong, Per-Vertex Gouraud & Flat Shading + Instancing)
+  const PLANET_VS = `#version 300 es
+  precision highp float;
+  precision highp int;
+
+  layout(location = 0) in vec3 aPosition;
+  layout(location = 1) in vec3 aNormal;
+  layout(location = 2) in vec2 aUv;
+  layout(location = 3) in mat4 aInstanceModel;
+
+  uniform mat4 uModel;
+  uniform mat4 uView;
+  uniform mat4 uProjection;
+  uniform bool uUseInstancing;
+  uniform float uPointSize;
+
+  // Materi 6: Per-Vertex Gouraud Shading uniforms
+  uniform int uShadingMode; // 0 = Phong, 1 = Gouraud, 2 = Flat
+  uniform vec3 uLightPos;
+  uniform vec3 uCameraPos;
+  uniform float uShininess;
+  uniform float uSpecularStrength;
+  uniform float uSunIntensity;
+  uniform bool uUseDiffuse;
+  uniform bool uUseSpecular;
+
+  out vec3 vWorldPos;
+  out vec3 vNormal;
+  out vec2 vUv;
+  out float vGouraudDiff;
+  out float vGouraudSpec;
+  out float vGouraudNdotL;
+
+  void main() {
+    mat4 modelMat = uUseInstancing ? aInstanceModel : uModel;
+    vec4 worldPos = modelMat * vec4(aPosition, 1.0);
+    vWorldPos = worldPos.xyz;
+    vNormal = mat3(modelMat) * aNormal;
+    vUv = aUv;
+
+    if (uShadingMode == 1) {
+      vec3 N = normalize(vNormal);
+      vec3 L = normalize(uLightPos - vWorldPos);
+      vec3 V = normalize(uCameraPos - vWorldPos);
+      vec3 H = normalize(L + V);
+      float ndotl = dot(N, L);
+      vGouraudNdotL = ndotl;
+      vGouraudDiff = uUseDiffuse ? max(ndotl, 0.0) * uSunIntensity : 0.0;
+      float specAng = max(dot(N, H), 0.0);
+      vGouraudSpec = (uUseSpecular && ndotl > 0.0)
+        ? pow(specAng, uShininess) * uSpecularStrength * uSunIntensity
+        : 0.0;
+    } else {
+      vGouraudNdotL = 0.0;
+      vGouraudDiff = 0.0;
+      vGouraudSpec = 0.0;
+    }
+
+    gl_Position = uProjection * uView * worldPos;
+    gl_PointSize = uPointSize;
+  }`;
+
+  // 3b. Planet Blinn-Phong + Phong/Gouraud/Flat Interpolation + Earth Night/Cloud + Atmosphere
   const PLANET_FS = `#version 300 es
   precision highp float;
+  precision highp int;
 
   in vec3 vWorldPos;
   in vec3 vNormal;
   in vec2 vUv;
+  in float vGouraudDiff;
+  in float vGouraudSpec;
+  in float vGouraudNdotL;
 
   uniform sampler2D uTexBase;
   uniform sampler2D uTexCloud;
@@ -160,7 +226,7 @@ SolarOdyssey.Shaders = (function () {
   uniform bool uUseTexture;
   uniform bool uHasEarthLayers;
   uniform bool uUseEarthLayers;
-  uniform bool uSmoothShading;
+  uniform int uShadingMode; // 0 = Phong, 1 = Gouraud, 2 = Flat
   uniform bool uUseAmbient;
   uniform bool uUseDiffuse;
   uniform bool uUseSpecular;
@@ -170,15 +236,7 @@ SolarOdyssey.Shaders = (function () {
   out vec4 fragColor;
 
   void main() {
-    // Materi 6: Smooth Phong normal interpolation vs. Flat faceted normal (dFdx/dFdy)
-    vec3 N = uSmoothShading
-      ? normalize(vNormal)
-      : normalize(cross(dFdx(vWorldPos), dFdy(vWorldPos)));
-
-    vec3 L = normalize(uLightPos - vWorldPos);
     vec3 V = normalize(uCameraPos - vWorldPos);
-    vec3 H = normalize(L + V);
-
     vec3 albedo = uUseTexture ? texture(uTexBase, vUv).rgb : uBaseColor;
 
     // Cloud layer for Earth
@@ -189,17 +247,34 @@ SolarOdyssey.Shaders = (function () {
       albedo = mix(albedo, vec3(0.97, 0.98, 1.0), cloudMask * 0.78);
     }
 
-    float NdotL = dot(N, L);
-    float diffFactor = max(NdotL, 0.0);
-
     vec3 ambient = uUseAmbient ? albedo * 0.085 : vec3(0.0);
-    vec3 diffuse = uUseDiffuse ? albedo * diffFactor * uSunIntensity : vec3(0.0);
-
-    float specAngle = max(dot(N, H), 0.0);
     float specBoost = (uHasEarthLayers && uUseTexture) ? (1.0 - cloudMask * 0.7) : 1.0;
-    vec3 specular = (uUseSpecular && NdotL > 0.0)
-      ? vec3(1.0, 0.96, 0.88) * pow(specAngle, uShininess) * uSpecularStrength * specBoost * uSunIntensity
-      : vec3(0.0);
+
+    vec3 N = normalize(vNormal);
+    float NdotL = 0.0;
+    vec3 diffuse = vec3(0.0);
+    vec3 specular = vec3(0.0);
+
+    if (uShadingMode == 1) {
+      // Materi 6: Gouraud Shading (barycentric interpolation of per-vertex lighting)
+      NdotL = vGouraudNdotL;
+      diffuse = albedo * vGouraudDiff;
+      specular = vec3(1.0, 0.96, 0.88) * vGouraudSpec * specBoost;
+    } else {
+      // Materi 6: Phong normal interpolation (0) vs. Flat faceted normal dFdx/dFdy (2)
+      N = (uShadingMode == 0)
+        ? normalize(vNormal)
+        : normalize(cross(dFdx(vWorldPos), dFdy(vWorldPos)));
+      vec3 L = normalize(uLightPos - vWorldPos);
+      vec3 H = normalize(L + V);
+      NdotL = dot(N, L);
+      float diffFactor = max(NdotL, 0.0);
+      diffuse = uUseDiffuse ? albedo * diffFactor * uSunIntensity : vec3(0.0);
+      float specAngle = max(dot(N, H), 0.0);
+      specular = (uUseSpecular && NdotL > 0.0)
+        ? vec3(1.0, 0.96, 0.88) * pow(specAngle, uShininess) * uSpecularStrength * specBoost * uSunIntensity
+        : vec3(0.0);
+    }
 
     vec3 color = ambient + diffuse + specular;
 
@@ -410,6 +485,7 @@ SolarOdyssey.Shaders = (function () {
   return {
     createProgram,
     STANDARD_VS,
+    PLANET_VS,
     SUN_FS,
     PLANET_FS,
     RING_FS,

@@ -707,6 +707,8 @@ SolarOdyssey.UI = (function () {
     document.getElementById("chk-orbits").addEventListener("change", (e) => (State.cg.showOrbits = e.target.checked));
     document.getElementById("chk-asteroids").addEventListener("change", (e) => (State.cg.showAsteroids = e.target.checked));
     document.getElementById("chk-tilt").addEventListener("change", (e) => (State.cg.useAxialTilt = e.target.checked));
+    document.getElementById("chk-anim-orbit")?.addEventListener("change", (e) => (State.cg.animateOrbit = e.target.checked));
+    document.getElementById("chk-anim-spin")?.addEventListener("change", (e) => (State.cg.animateSpin = e.target.checked));
 
     // Clipping planes
     document.getElementById("slider-near").addEventListener("input", (e) => {
@@ -754,19 +756,19 @@ SolarOdyssey.UI = (function () {
       btnCcw.classList.remove("active");
     });
 
-    // Interpolation (Smooth vs Flat)
-    const btnSmooth = document.getElementById("btn-shade-smooth");
+    // Interpolation (Phong vs Gouraud vs Flat) — Materi 6
+    const btnPhong = document.getElementById("btn-shade-phong");
+    const btnGouraud = document.getElementById("btn-shade-gouraud");
     const btnFlat = document.getElementById("btn-shade-flat");
-    btnSmooth.addEventListener("click", () => {
-      State.cg.smoothShading = true;
-      btnSmooth.classList.add("active");
-      btnFlat.classList.remove("active");
-    });
-    btnFlat.addEventListener("click", () => {
-      State.cg.smoothShading = false;
-      btnFlat.classList.add("active");
-      btnSmooth.classList.remove("active");
-    });
+    const shadeBtns = [btnPhong, btnGouraud, btnFlat];
+    function setShadingMode(mode, activeBtn) {
+      State.cg.shadingMode = mode;
+      shadeBtns.forEach((b) => b && b.classList.remove("active"));
+      if (activeBtn) activeBtn.classList.add("active");
+    }
+    btnPhong?.addEventListener("click", () => setShadingMode("phong", btnPhong));
+    btnGouraud?.addEventListener("click", () => setShadingMode("gouraud", btnGouraud));
+    btnFlat?.addEventListener("click", () => setShadingMode("flat", btnFlat));
 
     // Lighting & Textures
     document.getElementById("chk-ambient").addEventListener("change", (e) => (State.cg.useAmbient = e.target.checked));
@@ -779,11 +781,28 @@ SolarOdyssey.UI = (function () {
       document.getElementById("val-sun-int").textContent = State.cg.sunIntensity.toFixed(2);
     });
 
+    document.getElementById("slider-shininess")?.addEventListener("input", (e) => {
+      State.cg.shininessScale = parseFloat(e.target.value);
+      document.getElementById("val-shininess").textContent = `${State.cg.shininessScale.toFixed(2)}×`;
+    });
+
     document.getElementById("chk-texture").addEventListener("change", (e) => (State.cg.useTexture = e.target.checked));
     document.getElementById("chk-earth-layers").addEventListener("change", (e) => (State.cg.useEarthLayers = e.target.checked));
-    document.getElementById("chk-mipmap").addEventListener("change", (e) => {
-      State.cg.useMipmap = e.target.checked;
-      SolarOdyssey.Renderer.updateTextureFiltering(e.target.checked);
+
+    // Texture Filtering (Nearest vs Linear vs Mipmap) — Materi 10
+    const filterBtns = [
+      document.getElementById("btn-tex-nearest"),
+      document.getElementById("btn-tex-linear"),
+      document.getElementById("btn-tex-mipmap")
+    ];
+    filterBtns.forEach((btn) => {
+      btn?.addEventListener("click", () => {
+        const mode = btn.dataset.filter;
+        State.cg.textureFilter = mode;
+        filterBtns.forEach((b) => b && b.classList.remove("active"));
+        btn.classList.add("active");
+        SolarOdyssey.Renderer.updateTextureFiltering(mode);
+      });
     });
   }
 
@@ -932,8 +951,30 @@ SolarOdyssey.UI = (function () {
     const btnOpen = document.getElementById("btn-open-quiz");
     const btnClose = document.getElementById("btn-close-quiz");
     const btnNext = document.getElementById("btn-next-question");
+    const btnQuizFocus3d = document.getElementById("btn-quiz-focus-3d");
     const btnRestart = document.getElementById("btn-restart-quiz");
     const btnFinish = document.getElementById("btn-finish-quiz");
+
+    let currentFocusBodyId = null;
+
+    function detectBodyFromQuestion(q) {
+      const text = `${q.options[q.answerIndex] || ""} ${q.explanation || ""} ${q.question || ""}`.toLowerCase();
+      const map = [
+        { id: "mercury", keys: ["merkurius"] },
+        { id: "venus", keys: ["venus"] },
+        { id: "earth", keys: ["bumi"] },
+        { id: "mars", keys: ["mars", "olympus mons", "phobos", "deimos"] },
+        { id: "jupiter", keys: ["jupiter", "ganymede", "europa", "bintik merah"] },
+        { id: "saturn", keys: ["saturnus", "titan", "enceladus", "cassini"] },
+        { id: "uranus", keys: ["uranus", "miranda", "titania"] },
+        { id: "neptune", keys: ["neptunus", "triton"] },
+        { id: "sun", keys: ["matahari", "fotosfer", "korona"] }
+      ];
+      for (const item of map) {
+        if (item.keys.some((k) => text.includes(k))) return item.id;
+      }
+      return null;
+    }
 
     const activeView = document.getElementById("quiz-active-view");
     const resultView = document.getElementById("quiz-result-view");
@@ -1017,6 +1058,18 @@ SolarOdyssey.UI = (function () {
 
           scoreBadge.textContent = `Skor: ${currentScore} / 100`;
           feedbackExplanation.textContent = q.explanation;
+
+          currentFocusBodyId = detectBodyFromQuestion(q);
+          if (btnQuizFocus3d) {
+            if (currentFocusBodyId) {
+              const bInfo = findBodyOrMoon(currentFocusBodyId);
+              btnQuizFocus3d.textContent = `Lihat ${bInfo ? bInfo.name : "Planet"} di 3D`;
+              btnQuizFocus3d.classList.remove("hidden");
+            } else {
+              btnQuizFocus3d.classList.add("hidden");
+            }
+          }
+
           feedbackBox.classList.remove("hidden");
 
           if (currentIndex < currentQuestions.length - 1) {
@@ -1085,6 +1138,14 @@ SolarOdyssey.UI = (function () {
     if (btnClose) {
       btnClose.addEventListener("click", () => {
         modal.classList.add("hidden");
+      });
+    }
+
+    if (btnQuizFocus3d) {
+      btnQuizFocus3d.addEventListener("click", () => {
+        if (!currentFocusBodyId) return;
+        modal.classList.add("hidden");
+        selectBody(currentFocusBodyId, false);
       });
     }
 
