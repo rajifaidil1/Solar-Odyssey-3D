@@ -43,6 +43,7 @@
       </div>
       <div class="title-actions">
         <button id="btn-start-game" class="btn btn-primary btn-lg">Mulai Jelajahi Tata Surya</button>
+        <button id="btn-open-quiz-title" class="btn btn-glass btn-lg">Quiz Tata Surya</button>
         <button id="btn-open-credits-title" class="btn btn-glass btn-lg">Credits &amp; Tim Pembuat</button>
       </div>
       <div class="title-footer-note">
@@ -84,6 +85,7 @@
 
     <div class="hud-right">
       <button id="btn-toggle-audio" class="btn btn-glass btn-sm" title="Suara Ambient & Efek">Audio: ON</button>
+      <button id="btn-open-quiz" class="btn btn-glass btn-sm">Quiz Tata Surya</button>
       <button id="btn-toggle-cglab" class="btn btn-accent btn-sm">Lab Komputer Grafis</button>
       <button id="btn-open-credits" class="btn btn-glass btn-sm">Credits &amp; Tim</button>
     </div>
@@ -288,6 +290,59 @@
     <strong>Kontrol Pesawat:</strong> <code>W A S D</code> Terbang · <code>Q / E</code> Naik/Turun · <code>Shift</code> Boost · <code>Drag Mouse</code> Arahkan Pandangan · <code>Klik Planet</code> Inspeksi
   </div>
 
+  <!-- Interactive Astronomy & Solar System Quiz Modal -->
+  <div id="quiz-modal" class="modal-backdrop hidden">
+    <div class="modal-card quiz-card">
+      <div class="modal-header">
+        <div>
+          <div class="drawer-kicker">EDUKASI &amp; EVALUASI INTERAKTIF</div>
+          <h2>Quiz Tata Surya</h2>
+        </div>
+        <button id="btn-close-quiz" class="icon-close" title="Tutup Quiz">&times;</button>
+      </div>
+
+      <!-- Quiz Ongoing View -->
+      <div id="quiz-ongoing-view">
+        <div class="quiz-progress-bar">
+          <div id="quiz-progress-fill" class="quiz-progress-fill" style="width: 10%;"></div>
+        </div>
+        <div class="quiz-meta-row">
+          <span id="quiz-step-label">Pertanyaan 1 dari 8</span>
+          <span id="quiz-score-live">Skor: 0</span>
+        </div>
+
+        <h3 id="quiz-question-text" class="quiz-question-text"></h3>
+
+        <div id="quiz-options-container" class="quiz-options-grid"></div>
+
+        <div id="quiz-explanation-box" class="quiz-explanation-box hidden">
+          <div class="expl-title" id="quiz-feedback-title">Benar! 🎉</div>
+          <div id="quiz-explanation-text"></div>
+        </div>
+
+        <div class="quiz-actions-bar">
+          <button id="btn-next-question" class="btn btn-primary btn-sm hidden">Pertanyaan Selanjutnya &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Quiz Result View -->
+      <div id="quiz-result-view" class="hidden text-center">
+        <div id="quiz-result-emoji" class="quiz-result-emoji">🏆</div>
+        <h3 id="quiz-result-title" class="quiz-result-title">Quiz Selesai!</h3>
+        <p id="quiz-result-grade" class="quiz-result-grade">Luar Biasa!</p>
+        <div class="quiz-result-score-box">
+          <div class="quiz-score-num" id="quiz-result-score">8 / 8</div>
+          <div class="quiz-score-pct" id="quiz-result-pct">100% Benar</div>
+        </div>
+
+        <div class="quiz-result-actions">
+          <button id="btn-restart-quiz" class="btn btn-primary">Ulangi Quiz</button>
+          <button id="btn-done-quiz" class="btn btn-glass">Kembali ke Jelajah</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Credits & Team Contribution Multiplier Modal -->
   <div id="credits-modal" class="modal-backdrop hidden">
     <div class="modal-card">
@@ -341,6 +396,7 @@
   <script src="js/geometry.js"></script>
   <script src="js/planetData.js"></script>
   <script src="js/audio.js"></script>
+  <script src="js/quiz.js"></script>
   <script src="js/renderer.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/main.js"></script>
