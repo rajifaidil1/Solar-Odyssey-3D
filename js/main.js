@@ -18,7 +18,6 @@
     if (!Renderer.init(canvas)) return;
 
     UI.init();
-    if (SolarOdyssey.Quiz) SolarOdyssey.Quiz.init();
     bindCanvasInteractions(canvas);
 
     let lastTime = performance.now();

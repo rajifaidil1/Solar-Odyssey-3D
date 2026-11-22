@@ -9,7 +9,6 @@ Aplikasi game edukasi dan eksplorasi luar angkasa 3D interaktif berbasis **Nativ
 - **Platform**: PC (Windows, macOS, Linux via browser modern)
 - **Standalone & 100% Offline**: Tidak menggunakan library eksternal, CDN, atau aset internet. Seluruh geometri, shader GLSL, tekstur planet 512×256, dan synthesizer audio dibangkitkan secara mandiri oleh kode program.
 - **Tampilan Credits & Multiplier Nilai Tim**: Dapat diakses langsung dari Layar Judul maupun tombol **Credits & Tim** di HUD atas, lengkap dengan pengaturan **Multiplier Kontribusi (0.00 – 1.00)** oleh Ketua Tim (**Rajif Aidil Putra**).
-- **Quiz Edukasi Interaktif Tata Surya**: Dapat dimainkan langsung dari Layar Judul maupun tombol **Quiz Tata Surya** di HUD atas, menguji pengetahuan astronomi 8 planet dengan umpan balik penjelasan dan skor penilaian otomatis.
 
 ## Cara Menjalankan Aplikasi
 1. Ekstrak seluruh isi file ZIP ini ke dalam satu folder.
@@ -18,10 +17,10 @@ Aplikasi game edukasi dan eksplorasi luar angkasa 3D interaktif berbasis **Nativ
 
 ## Struktur Folder Proyek
 ```text
-Solar-Odyssey/
+Solar-Odyssey-3D/
 ├── index.html                        # Struktur halaman utama, HUD, & panel interaktif
 ├── README.md                         # Panduan instalasi & penggunaan aplikasi
-├── DOKUMENTASI_KOMPUTER_GRAFIS.md    # Pemetaan materi kuliah Pertemuan 1–10 ke kode sumber
+├── DOKUMENTASI_KOMPUTER_GRAFIS.md   # Pemetaan materi kuliah Pertemuan 1–10 ke kode sumber
 ├── run_game.bat                      # Peluncur cepat untuk Windows
 ├── run_game.sh                       # Peluncur cepat untuk macOS / Linux
 ├── css/
@@ -33,7 +32,6 @@ Solar-Odyssey/
     ├── textures.js                   # Generator tekstur prosedural planet, awan & cincin
     ├── geometry.js                   # Pembangkit mesh parametrik & manajemen VAO/VBO/EBO
     ├── planetData.js                 # Database astronomi Matahari, 8 Planet, & Satelit
-    ├── quiz.js                       # Sistem kuis interaktif astronomi & evaluasi skor
     ├── audio.js                      # Synthesizer efek suara & ambient WebAudio API
     ├── renderer.js                   # Pipeline rendering WebGL2, kamera Orbit & Pesawat
     ├── ui.js                         # Kontrol HUD, kartu telemetri, Lab CG & Credits
@@ -45,4 +43,3 @@ Solar-Odyssey/
 - **Mode Kamera Orbit**: Klik-seret (*drag*) untuk memutar sudut pandang, *scroll wheel* untuk zoom.
 - **Mode Pesawat (WASD)**: Klik tombol `Pesawat (WASD)` di bilah atas, lalu gunakan `W A S D` untuk terbang, `Q / E` untuk naik/turun, `Shift` untuk turbo, dan seret mouse untuk mengarahkan pandangan.
 - **Lab Komputer Grafis**: Klik tombol `Lab Komputer Grafis` di kanan atas untuk menguji langsung konsep Proyeksi, Clipping Planes, Wireframe, Back-Face Culling, Smooth vs. Flat Shading, Blinn-Phong Lighting, Tekstur UV, dan Matriks 4×4.
-- **Quiz Tata Surya**: Klik tombol `Quiz Tata Surya` di HUD atas atau di Layar Judul untuk menguji wawasan tata surya Anda dengan umpan balik edukatif interaktif.

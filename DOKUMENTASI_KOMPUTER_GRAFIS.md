@@ -1,9 +1,5 @@
 # Pemetaan Materi Komputer Grafis (Pertemuan 1–10) pada Solar Odyssey
 
-Dokumen ini disusun sebagai bahan lampiran teknis untuk **Laporan Proyek Akhir Komputer Grafis** (Dosen Pengampu: Agi Putra Kharisma), yang menjelaskan implementasi setiap topik perkuliahan di dalam kode sumber **Solar Odyssey**.
-
----
-
 ## 1. Pengantar Komputer Grafis (Pertemuan 1)
 - **Konsep**: Arsitektur pipeline grafika real-time berbasis GPU menggunakan **WebGL2 (OpenGL ES 3.0)** dengan siklus *render loop* 60 FPS (`requestAnimationFrame`).
 - **Implementasi Kode**: `js/main.js` (fungsi `initApp` dan `frame`), serta pengukuran FPS dan *frame time* secara langsung di `SolarOdyssey.State.stats`.

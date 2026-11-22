@@ -272,7 +272,6 @@ SolarOdyssey.Math3D = (function () {
     mat4Ortho,
     mat4LookAt,
     mat4Invert,
-    transformMat4Vec4,
     screenToWorldRay,
     raySphereIntersect,
     formatMat4

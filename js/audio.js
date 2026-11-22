@@ -72,65 +72,6 @@ SolarOdyssey.Audio = (function () {
     osc.stop(now + 0.25);
   }
 
-  function playSuccessChime() {
-    if (!enabled) return;
-    const c = ensureContext();
-    if (!c) return;
-    const now = c.currentTime;
-
-    [587.33, 880.0].forEach((freq, i) => {
-      const osc = c.createOscillator();
-      const gain = c.createGain();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(freq, now + i * 0.1);
-      gain.gain.setValueAtTime(0.12, now + i * 0.1);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.22);
-      osc.connect(gain);
-      gain.connect(masterGain);
-      osc.start(now + i * 0.1);
-      osc.stop(now + i * 0.1 + 0.23);
-    });
-  }
-
-  function playErrorBuzz() {
-    if (!enabled) return;
-    const c = ensureContext();
-    if (!c) return;
-    const now = c.currentTime;
-
-    const osc = c.createOscillator();
-    const gain = c.createGain();
-    osc.type = "sawtooth";
-    osc.frequency.setValueAtTime(180, now);
-    osc.frequency.linearRampToValueAtTime(120, now + 0.25);
-    gain.gain.setValueAtTime(0.1, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.26);
-    osc.connect(gain);
-    gain.connect(masterGain);
-    osc.start(now);
-    osc.stop(now + 0.27);
-  }
-
-  function playFinishFanfare() {
-    if (!enabled) return;
-    const c = ensureContext();
-    if (!c) return;
-    const now = c.currentTime;
-
-    [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
-      const osc = c.createOscillator();
-      const gain = c.createGain();
-      osc.type = "triangle";
-      osc.frequency.setValueAtTime(freq, now + i * 0.12);
-      gain.gain.setValueAtTime(0.15, now + i * 0.12);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.12 + 0.38);
-      osc.connect(gain);
-      gain.connect(masterGain);
-      osc.start(now + i * 0.12);
-      osc.stop(now + i * 0.12 + 0.4);
-    });
-  }
-
   function toggle() {
     enabled = !enabled;
     if (masterGain && ctx) {
@@ -146,9 +87,6 @@ SolarOdyssey.Audio = (function () {
   return {
     startAmbientDrone,
     playSelectChime,
-    playSuccessChime,
-    playErrorBuzz,
-    playFinishFanfare,
     toggle,
     isEnabled
   };

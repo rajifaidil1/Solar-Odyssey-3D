@@ -34,7 +34,7 @@
         </div>
         <div class="feat-item">
           <strong>Inspeksi &amp; Eksplorasi Bebas</strong>
-          <span>Klik planet mana saja untuk mengunci orbit &amp; melihat telemetri, atau kendalikan pesawat dengan WASD + Mouse.</span>
+          <span>Klik planet mana saja untuk mengunci orbit &amp; melihat telemetri, atau kendalikan jelajah bebas dengan WASD + Mouse.</span>
         </div>
         <div class="feat-item">
           <strong>Lab Pipeline Komputer Grafis</strong>
@@ -43,11 +43,10 @@
       </div>
       <div class="title-actions">
         <button id="btn-start-game" class="btn btn-primary btn-lg">Mulai Jelajahi Tata Surya</button>
-        <button id="btn-open-quiz-title" class="btn btn-glass btn-lg">Quiz Tata Surya</button>
         <button id="btn-open-credits-title" class="btn btn-glass btn-lg">Credits &amp; Tim Pembuat</button>
       </div>
       <div class="title-footer-note">
-        Proyek Akhir Mata Kuliah Komputer Grafis · Ketua Tim: <strong>Rajif Aidil Putra</strong>
+        Proyek Akhir Mata Kuliah Komputer Grafis · Ketua Tim: <strong>Rajif Aidil Putra Afina</strong>
       </div>
     </div>
   </div>
@@ -67,7 +66,7 @@
     <div class="hud-center">
       <div class="control-pill">
         <button id="btn-camera-orbit" class="pill-btn active" title="Kamera Orbit (Drag & Scroll)">Orbit</button>
-        <button id="btn-camera-ship" class="pill-btn" title="Mode Pesawat Bebas (WASD + Q/E + Drag)">Pesawat (WASD)</button>
+        <button id="btn-camera-ship" class="pill-btn" title="Mode Jelajah Bebas (WASD + Q/E + Drag)">Jelajah Bebas (WASD)</button>
       </div>
       <div class="control-pill">
         <button id="btn-hero-align" class="pill-btn" title="Susun planet dalam formasi sejajar ikonik">Formasi Sejajar</button>
@@ -85,7 +84,7 @@
 
     <div class="hud-right">
       <button id="btn-toggle-audio" class="btn btn-glass btn-sm" title="Suara Ambient & Efek">Audio: ON</button>
-      <button id="btn-open-quiz" class="btn btn-glass btn-sm">Quiz Tata Surya</button>
+      <button id="btn-open-quiz" class="btn btn-quiz btn-sm" title="Kuis Interaktif Tata Surya">Quiz Tata Surya</button>
       <button id="btn-toggle-cglab" class="btn btn-accent btn-sm">Lab Komputer Grafis</button>
       <button id="btn-open-credits" class="btn btn-glass btn-sm">Credits &amp; Tim</button>
     </div>
@@ -113,6 +112,15 @@
       <button id="btn-next-body" class="btn btn-glass btn-xs">Berikutnya &rarr;</button>
     </div>
 
+    <!-- 1. Real Astronomical Photo Frame with Local Fallback -->
+    <div class="planet-photo-frame" id="planet-photo-frame">
+      <div class="photo-img-wrapper">
+        <img id="planet-real-img" class="planet-real-img" alt="Citra Asli Planet" />
+        <span class="photo-source-badge" id="photo-source-badge">Foto Asli</span>
+      </div>
+      <div class="photo-caption" id="photo-caption"></div>
+    </div>
+
     <p class="planet-desc" id="card-desc"></p>
 
     <div class="metrics-grid" id="card-metrics"></div>
@@ -120,6 +128,12 @@
     <div class="card-section">
       <div class="section-label">Komposisi &amp; Karakteristik Utama</div>
       <div id="card-composition" class="comp-list"></div>
+    </div>
+
+    <!-- 2. Main Natural Satellites Information List -->
+    <div class="card-section" id="section-satellites">
+      <div class="section-label">Satelit Alami Utama</div>
+      <div id="card-satellites" class="satellites-list"></div>
     </div>
 
     <div class="card-section">
@@ -287,60 +301,7 @@
 
   <!-- Flight Controls Helper Pill -->
   <div id="flight-guide" class="flight-guide hidden">
-    <strong>Kontrol Pesawat:</strong> <code>W A S D</code> Terbang · <code>Q / E</code> Naik/Turun · <code>Shift</code> Boost · <code>Drag Mouse</code> Arahkan Pandangan · <code>Klik Planet</code> Inspeksi
-  </div>
-
-  <!-- Interactive Astronomy & Solar System Quiz Modal -->
-  <div id="quiz-modal" class="modal-backdrop hidden">
-    <div class="modal-card quiz-card">
-      <div class="modal-header">
-        <div>
-          <div class="drawer-kicker">EDUKASI &amp; EVALUASI INTERAKTIF</div>
-          <h2>Quiz Tata Surya</h2>
-        </div>
-        <button id="btn-close-quiz" class="icon-close" title="Tutup Quiz">&times;</button>
-      </div>
-
-      <!-- Quiz Ongoing View -->
-      <div id="quiz-ongoing-view">
-        <div class="quiz-progress-bar">
-          <div id="quiz-progress-fill" class="quiz-progress-fill" style="width: 10%;"></div>
-        </div>
-        <div class="quiz-meta-row">
-          <span id="quiz-step-label">Pertanyaan 1 dari 8</span>
-          <span id="quiz-score-live">Skor: 0</span>
-        </div>
-
-        <h3 id="quiz-question-text" class="quiz-question-text"></h3>
-
-        <div id="quiz-options-container" class="quiz-options-grid"></div>
-
-        <div id="quiz-explanation-box" class="quiz-explanation-box hidden">
-          <div class="expl-title" id="quiz-feedback-title">Benar! 🎉</div>
-          <div id="quiz-explanation-text"></div>
-        </div>
-
-        <div class="quiz-actions-bar">
-          <button id="btn-next-question" class="btn btn-primary btn-sm hidden">Pertanyaan Selanjutnya &rarr;</button>
-        </div>
-      </div>
-
-      <!-- Quiz Result View -->
-      <div id="quiz-result-view" class="hidden text-center">
-        <div id="quiz-result-emoji" class="quiz-result-emoji">🏆</div>
-        <h3 id="quiz-result-title" class="quiz-result-title">Quiz Selesai!</h3>
-        <p id="quiz-result-grade" class="quiz-result-grade">Luar Biasa!</p>
-        <div class="quiz-result-score-box">
-          <div class="quiz-score-num" id="quiz-result-score">8 / 8</div>
-          <div class="quiz-score-pct" id="quiz-result-pct">100% Benar</div>
-        </div>
-
-        <div class="quiz-result-actions">
-          <button id="btn-restart-quiz" class="btn btn-primary">Ulangi Quiz</button>
-          <button id="btn-done-quiz" class="btn btn-glass">Kembali ke Jelajah</button>
-        </div>
-      </div>
-    </div>
+    <strong>Kontrol Jelajah Bebas:</strong> <code>W A S D</code> Bergerak · <code>Q / E</code> Naik/Turun · <code>Shift</code> Percepat · <code>Drag Mouse</code> Arahkan Pandangan · <code>Klik Planet</code> Inspeksi
   </div>
 
   <!-- Credits & Team Contribution Multiplier Modal -->
@@ -359,20 +320,7 @@
         Ketua tim dapat mengatur <strong>Multiplier Nilai (0.00 – 1.00)</strong> berdasarkan kontribusi masing-masing anggota (1–4 orang). Perubahan otomatis tersimpan secara lokal.
       </p>
 
-      <div class="team-table-wrap">
-        <table class="team-table">
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>Nama Lengkap</th>
-              <th>NIM</th>
-              <th>Peran / Kontribusi</th>
-              <th>Multiplier (0–1)</th>
-            </tr>
-          </thead>
-          <tbody id="team-tbody"></tbody>
-        </table>
-      </div>
+      <div class="team-cards-list" id="team-list"></div>
 
       <div class="modal-actions-bar">
         <div class="left-btns">
@@ -388,6 +336,74 @@
     </div>
   </div>
 
+  <!-- 3. Interactive Solar System Quiz Modal -->
+  <div id="quiz-modal" class="modal-backdrop hidden">
+    <div class="modal-card quiz-card">
+      <div class="modal-header">
+        <div>
+          <div class="drawer-kicker">KUIS ASTRONOMI INTERAKTIF</div>
+          <h2>Quiz Tata Surya</h2>
+        </div>
+        <button id="btn-close-quiz" class="icon-close" title="Tutup kuis">&times;</button>
+      </div>
+
+      <!-- Active Quiz View -->
+      <div id="quiz-active-view">
+        <div class="quiz-hud-row">
+          <div class="quiz-progress-wrap">
+            <span class="quiz-progress-text" id="quiz-progress-text">Soal 1 / 10</span>
+            <div class="quiz-progress-bar">
+              <div class="quiz-progress-fill" id="quiz-progress-fill" style="width: 10%;"></div>
+            </div>
+          </div>
+          <div class="quiz-score-badge" id="quiz-score-badge">Skor: 0</div>
+        </div>
+
+        <div class="quiz-question-box">
+          <div class="quiz-category-tag" id="quiz-category-tag">ASTRONOMI</div>
+          <h3 class="quiz-question-text" id="quiz-question-text">Memuat pertanyaan...</h3>
+        </div>
+
+        <div class="quiz-options-list" id="quiz-options-list"></div>
+
+        <div id="quiz-feedback-box" class="quiz-feedback-box hidden">
+          <div class="feedback-status" id="feedback-status"></div>
+          <p class="feedback-explanation" id="feedback-explanation"></p>
+          <button id="btn-next-question" class="btn btn-primary btn-md">Lanjut ke Soal Berikutnya &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Quiz Completed / Result View -->
+      <div id="quiz-result-view" class="quiz-result-view hidden">
+        <div class="result-trophy-icon" id="result-trophy-icon">🏆</div>
+        <h3 class="result-title" id="result-title">Hasil Misi Kuis Tata Surya</h3>
+        <div class="result-grade-badge" id="result-grade-badge">ASTRONOM UTAMA</div>
+        <div class="result-score-large" id="result-score-large">100 / 100</div>
+        <p class="result-summary" id="result-summary">Selamat! Anda menguasai seluruh rahasia kosmik Tata Surya.</p>
+
+        <div class="result-stats-grid">
+          <div class="result-stat-card">
+            <span class="stat-number stat-correct" id="stat-correct-count">10</span>
+            <span class="stat-label">Jawaban Benar</span>
+          </div>
+          <div class="result-stat-card">
+            <span class="stat-number stat-wrong" id="stat-wrong-count">0</span>
+            <span class="stat-label">Jawaban Salah</span>
+          </div>
+          <div class="result-stat-card">
+            <span class="stat-number" id="stat-accuracy">100%</span>
+            <span class="stat-label">Akurasi Jawaban</span>
+          </div>
+        </div>
+
+        <div class="result-actions">
+          <button id="btn-restart-quiz" class="btn btn-primary btn-lg">Ulangi Quiz (10 Soal Baru)</button>
+          <button id="btn-finish-quiz" class="btn btn-glass btn-lg">Kembali ke Tata Surya 3D</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Modular JavaScript Pipeline (Works both offline file:// and HTTP server) -->
   <script src="js/namespace.js"></script>
   <script src="js/math.js"></script>
@@ -396,7 +412,6 @@
   <script src="js/geometry.js"></script>
   <script src="js/planetData.js"></script>
   <script src="js/audio.js"></script>
-  <script src="js/quiz.js"></script>
   <script src="js/renderer.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/main.js"></script>
