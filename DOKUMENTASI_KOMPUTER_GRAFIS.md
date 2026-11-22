@@ -1,10 +1,10 @@
-# Pemetaan Materi Grafika Komputer (Pertemuan 1–10) pada Solar Odyssey 3D
+# Pemetaan Materi Komputer Grafis (Pertemuan 1–10) pada Solar Odyssey 3D
 
-Dokumen ini disusun sebagai bahan lampiran teknis untuk **Laporan Proyek Akhir Grafika Komputer** (Dosen Pengampu: Agi Putra Kharisma), yang menjelaskan implementasi setiap topik perkuliahan di dalam kode sumber **Solar Odyssey 3D**.
+Dokumen ini disusun sebagai bahan lampiran teknis untuk **Laporan Proyek Akhir Komputer Grafis** (Dosen Pengampu: Agi Putra Kharisma), yang menjelaskan implementasi setiap topik perkuliahan di dalam kode sumber **Solar Odyssey 3D**.
 
 ---
 
-## 1. Pengantar Grafika Komputer (Pertemuan 1)
+## 1. Pengantar Komputer Grafis (Pertemuan 1)
 - **Konsep**: Arsitektur pipeline grafika real-time berbasis GPU menggunakan **WebGL2 (OpenGL ES 3.0)** dengan siklus *render loop* 60 FPS (`requestAnimationFrame`).
 - **Implementasi Kode**: `js/main.js` (fungsi `initApp` dan `frame`), serta pengukuran FPS dan *frame time* secara langsung di `SolarOdyssey.State.stats`.
 
@@ -49,7 +49,9 @@ Dokumen ini disusun sebagai bahan lampiran teknis untuk **Laporan Proyek Akhir G
   - **Fitur Interaktif**: Tab **2. Mesh & Clipping** memungkinkan pengguna mengaktifkan/menonaktifkan `gl.CULL_FACE` serta membalik orientasi *front-face* antara `CCW` dan `CW`.
 
 ## 8. 3D Modeling (Pertemuan 8)
-- **Konsep**: Pemodelan 3D prosedural, struktur hierarkis *Scene Graph* (Matahari $ightarrow$ Planet $ightarrow$ Bulan & Cincin), serta **Hardware Instanced Rendering** (`gl.drawElementsInstanced`) untuk merender **450 asteroid 3D** hanya dalam satu *draw call*.
+- **Konsep**: Pemodelan 3D prosedural, struktur hierarkis *Scene Graph* (Matahari $
+ightarrow$ Planet $
+ightarrow$ Bulan & Cincin), serta **Hardware Instanced Rendering** (`gl.drawElementsInstanced`) untuk merender **450 asteroid 3D** hanya dalam satu *draw call*.
 - **Implementasi Kode**: `js/geometry.js` (`createRingMesh`, `createInstancedAsteroidBelt`) dan `js/planetData.js`.
 
 ## 9. Color & Light (Pertemuan 9)
